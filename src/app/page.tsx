@@ -1,3 +1,4 @@
+"use client";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
 import Task from "@components/Task";
@@ -7,37 +8,42 @@ import { nanoid } from "nanoid";
 import { useState } from "react";
 
 export default function Home() {
-  // Define the interface of task-item object
   interface TaskItem {
-    // your code here
+    id: string;
+    title: string;
+    completed: boolean;
   }
 
-  // useState hook for an array of task-item objects
   const [tasks, setTasks] = useState<TaskItem[]>([]);
+  const [count1, setAll] = useState(0);
+  const [count2, setDone] = useState(0);
 
-  // Define the function with proper type
-  const addTask = (newTaskTitle) => {
+  const addTask = (newTaskTitle: string) => {
     const newTask = { id: nanoid(), title: newTaskTitle, completed: false };
     const newTasks = [...tasks, newTask];
+    setAll(count1 + 1);
     setTasks(newTasks);
   };
 
-  // Define the function with proper type
-  const deleteTask = (taskId) => {
+  const deleteTask = (taskId: string) => {
+    const taskToDelete = tasks.find((task) => task.id === taskId);
+    if (taskToDelete && taskToDelete.completed) {
+      setDone(Math.max(count2 - 1, 0));
+    }
     const newTasks = tasks.filter((task) => task.id !== taskId);
+    setAll(count1 - 1);
     setTasks(newTasks);
   };
 
-  // Define the function with proper type
-  const toggleDoneTask = (taskId) => {
-    //structuredClone will copy an array or an object "deeply"
-    //So objects within an object will be copied too
+  const toggleDoneTask = (taskId: string) => {
     const newTasks = structuredClone(tasks);
-    //search for a task based on condition
-    const task = newTasks.find((x) => x.id === taskId);
+    const task:any = newTasks.find((x) => x.id === taskId);
     task.completed = !task.completed;
     setTasks(newTasks);
+    const updatedDoneCount = newTasks.filter((task) => task.completed).length;
+    setDone(updatedDoneCount);
   };
+  
 
   return (
     // Main container
@@ -48,7 +54,7 @@ export default function Home() {
       <div style={{ maxWidth: "400px" }} className="mx-auto">
         {/* Task summary */}
         <p className="text-center text-secondary fst-italic">
-          All (...) Done (...)
+          All ({count1}) Done ({count2})
         </p>
         {/* task input */}
         <TaskInput addTaskFunc={addTask} />
@@ -67,7 +73,7 @@ export default function Home() {
       </div>
 
       {/* //footer section */}
-      <Footer year="2024" fullName="Chayanin Suatap" studentId="12345678" />
+      <Footer year="2024" fullName="Chayangkul Chanjarupong" studentId="660610745" />
     </div>
   );
 }
